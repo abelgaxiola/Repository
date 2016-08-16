@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
 using System.Configuration;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Context<T> : DbContext where T : class
 {
@@ -16,8 +17,10 @@ public class Context<T> : DbContext where T : class
             var keyValue = ConfigurationManager.ConnectionStrings[connectionString].ToString();
             if (keyValue == null)
                 throw new Exception("Invalid key value for ConnectionString was passed to Context constructor");
-            // Adding the letter "s" to pluralize the table
-            TableName = typeof(T).Name + "s";
+
+            var attribute = (TableAttribute)Attribute.GetCustomAttribute(typeof(T), typeof(TableAttribute));
+
+            TableName = attribute.Name;
         }
         catch (Exception exception)
         {
